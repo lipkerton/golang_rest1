@@ -1,5 +1,4 @@
 package domain
-
 import "time"
 
 type Thread struct {
