@@ -11,5 +11,6 @@ type ThreadRepository interface {
 
 type CommentRepository interface {
 	Create(comment *domain.Comment) error
+	GetById(id int) (comment *domain.Comment error)
 	Delete(id int) error
 }
