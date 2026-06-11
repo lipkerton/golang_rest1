@@ -24,6 +24,6 @@ func main() {
 
 	log.Printf("Сервер запущен на порту %s", port)
 	if err := srv.ListenAndServe(); err != nil {
-		log.Fatalf("Ошибка запуска сервера!")
+		log.Fatalf("Ошибка запуска сервера: %v", err)
 	}
 }
