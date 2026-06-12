@@ -1,15 +1,9 @@
 package service
-import (
-	"errors"
-	"time"
-	"github.com/lipkerton/wildcard/internal/domain"
-)
 
-var (
-	ErrorEmptyBody		 = errors.New("body is required")
-	ErrorEmptyPassword	 = errors.New("password is required")
-	ErrorNotFound		 = errors.New("thread not found")
-	ErrorWrongPassword	 = errors.New("wrong password")
+import (
+	"time"
+
+	"github.com/lipkerton/wildcard/internal/domain"
 )
 
 type ThreadService struct {
@@ -22,16 +16,16 @@ func NewThreadService(repo ThreadRepository) *ThreadService {
 
 func (s *ThreadService) Create(subject, body, author, password string) (*domain.Thread, error) {
 	if body == "" {
-		return nil, ErrorEmptyBody
+		return nil, domain.ErrorEmptyBody
 	}
 	if password == "" {
-		return nil, ErrorEmptyPassword
+		return nil, domain.ErrorEmptyPassword
 	}
 
 	thread := &domain.Thread{
-		Subject: subject,
-		Body: body,
-		Author: author,
+		Subject:  subject,
+		Body:     body,
+		Author:   author,
 		Password: password,
 	}
 	now := time.Now()
@@ -47,7 +41,7 @@ func (s *ThreadService) Create(subject, body, author, password string) (*domain.
 func (s *ThreadService) GetByID(id int) (*domain.Thread, error) {
 	thread, err := s.repo.GetById(id)
 	if err != nil {
-		return nil, ErrorNotFound
+		return nil, domain.ErrorNotFound
 	}
 	return thread, nil
 }
@@ -63,10 +57,10 @@ func (s *ThreadService) List() ([]domain.Thread, error) {
 func (s *ThreadService) Delete(id int, password string) error {
 	thread, err := s.repo.GetById(id)
 	if err != nil {
-		return ErrorNotFound
+		return domain.ErrorNotFound
 	}
 	if thread.Password != password {
-		return ErrorWrongPassword
+		return domain.ErrorWrongPassword
 	}
 	return s.repo.Delete(id)
 }
