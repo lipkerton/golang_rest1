@@ -19,6 +19,8 @@ func NewThreadHandler (svc *service.ThreadService) {
 
 // Create - POST /threads
 func (h *ThreadHandler) Create(w http.ResponseWriter, r *http.Request) {
+    defer r.Body.Close()
+
     var req dto.CreateThreadRequest
 
     if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
@@ -27,7 +29,6 @@ func (h *ThreadHandler) Create(w http.ResponseWriter, r *http.Request) {
         json.NewEncoder(w).Encode(map[string]string{"error": "некорректный JSON"})
     	return
     }
-    defer r.Body.Close()
 
     thread, err := h.svc.Create(req.Subject, req.Body, req.Author, req.Password)
     if err != nil {
