@@ -2,7 +2,7 @@ package dto
 import "time"
 
 type ThreadResponse struct {
-	ID 			int			`json:"id"`
+	ID 		int		`json:"id"`
 	Subject		string		`json:"subject"`
 	Body 		string		`json:"body"`
 	Author 		string		`json:"author,omitempty"`

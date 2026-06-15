@@ -4,6 +4,7 @@ import (
     "json"
     "net/http"
 
+    "github.com/lipkerton/wildcard/internal/domain
     "github.com/lipkerton/wildcard/internal/transport/dto"
     "github.com/lipkerton/wildcard/internal/service"
 )
@@ -23,6 +24,24 @@ func (h *ThreadHandler) Create(w http.ResponseWriter, r *http.Request) {
     if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
         w.Header().Set("Content-Type", "application/json")
         w.WriteHeader(http.StatusBadRequest)
-        json.NewEncoder(w).Encode(map[string]string{"error": "некорректный JSON"}
+        json.NewEncoder(w).Encode(map[string]string{"error": "некорректный JSON"})
+    	return
+    }
+    defer r.Body.Close()
+
+    thread, err := h.svc.Create(req.Subject, req.Body, req.Author, req.Password)
+    if err != nil {
+        w.Header().Set("Content-Type", "application/json")
+        switch {
+        case errors.Is(err, domain.ErrorEmptyBody):
+            w.WriteHeader(http.StatusBadRequest)
+            json.NewEncoder(w).Encode(map[string]string{"error": err.Error()})
+        case errors.Is(err, domain.ErrorEmptyPassword):
+            w.WriteHeader(http.StatusBadRequest)
+            json.NewEncoder(w).Encode(map[string]string{"error": err.Error()})
+        default:
+            w.WriteHeader(http.StatusInternalServerError)
+            json.NewEncoder(w).Encode(map[string]string{"error": "внутренняя ошибка сервера!"})
+        }
     }
 }
